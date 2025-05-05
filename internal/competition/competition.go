@@ -1,27 +1,30 @@
-package models
+package competition
 
 import (
 	"errors"
 	"fmt"
 	"time"
+	"yadro-test-assigment/models"
+	"yadro-test-assigment/models/config"
+	"yadro-test-assigment/models/event"
 )
 
 // Competition Представляет собой текущее соревнование
 type Competition struct {
-	Config      Config
-	Competitors map[int]*Competitor
-	Events      []Event
+	Config      config.Config
+	Competitors map[int]*internal.Competitor
+	Events      []event.Event
 }
 
 // NewCompetition создает новый экземпляр соревнования
-func NewCompetition(config Config) *Competition {
+func NewCompetition(config config.Config) *Competition {
 	return &Competition{
 		Config:      config,
-		Competitors: make(map[int]*Competitor),
-		Events:      make([]Event, 0),
+		Competitors: make(map[int]*internal.Competitor),
+		Events:      make([]event.Event, 0),
 	}
 }
-func (receiver *Competition) ProcessEvent(event Event) string {
+func (receiver *Competition) ProcessEvent(event event.Event) string {
 	//TODO обработать логику из md
 
 	processResult, err := receiver.process(event)
@@ -33,13 +36,13 @@ func (receiver *Competition) ProcessEvent(event Event) string {
 }
 
 // Обрабатывает перечень возможных событий
-func (receiver *Competition) process(event Event) (msg string, err error) {
+func (receiver *Competition) process(event event.Event) (msg string, err error) {
 	competitor := receiver.findCompetitor(event.CompetitorID)
 
 	switch event.EventID {
 	case 1:
 		msg = fmt.Sprintf("The competitor(%d) registered", competitor.ID)
-		receiver.Competitors[event.CompetitorID] = &Competitor{
+		receiver.Competitors[event.CompetitorID] = &internal.Competitor{
 			ID:         event.CompetitorID,
 			Registered: true,
 		}
@@ -115,9 +118,9 @@ func parseDuration(s string) (time.Duration, error) {
 }
 
 // Ищет или создает нового участника
-func (receiver *Competition) findCompetitor(CompetitorID int) *Competitor {
+func (receiver *Competition) findCompetitor(CompetitorID int) *internal.Competitor {
 	if receiver.Competitors[CompetitorID] == nil {
-		receiver.Competitors[CompetitorID] = &Competitor{
+		receiver.Competitors[CompetitorID] = &internal.Competitor{
 			ID: CompetitorID,
 		}
 	}

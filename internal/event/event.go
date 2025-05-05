@@ -1,6 +1,8 @@
-package models
+package event
 
-import "time"
+import (
+	"time"
+)
 
 type Event struct {
 	Time         time.Time
