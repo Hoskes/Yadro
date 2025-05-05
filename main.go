@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	. "yadro-test-assigment/models"
-	. "yadro-test-assigment/models/competition"
-	. "yadro-test-assigment/models/config"
-	. "yadro-test-assigment/models/event"
+	. "yadro-test-assigment/internal"
+	. "yadro-test-assigment/internal/competition"
+	. "yadro-test-assigment/internal/config"
+	. "yadro-test-assigment/internal/event"
 )
 
 func main() {

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"time"
-	"yadro-test-assigment/models"
-	"yadro-test-assigment/models/config"
-	"yadro-test-assigment/models/event"
+	"yadro-test-assigment/internal"
+	"yadro-test-assigment/internal/config"
+	"yadro-test-assigment/internal/event"
 )
 
 // Competition Представляет собой текущее соревнование
