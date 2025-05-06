@@ -90,8 +90,9 @@ func (receiver *Competition) process(event event.Event) (msg string, err error) 
 		msg += fmt.Sprintf("The competitor(%d) left the firing range", competitor.ID)
 
 		competitor.AllHits += competitor.LineHits
-		competitor.ShotLines.TotalHits += competitor.LineHits
 
+		competitor.ShotLines.TotalHits += competitor.LineHits
+		competitor.TotalShots += receiver.ShotsCount
 	case 8:
 		msg += fmt.Sprintf("The competitor(%d) entered the penalty laps", competitor.ID)
 
@@ -127,7 +128,13 @@ func (receiver *Competition) process(event event.Event) (msg string, err error) 
 	case 11:
 		msg += fmt.Sprintf("The competitor(%d) can`t continue: %s", competitor.ID, event.ExtraParams)
 		competitor.Status = "Not finished"
-		competitor.GetCurrentLap().EndTime = event.Time
+		if (competitor.GetCurrentLap().EndTime == time.Time{}) {
+			competitor.DeleteLastLap()
+		}
+		if (competitor.GetCurrentPenalty().EndTime == time.Time{}) {
+			//competitor.GetCurrentPenalty().EndTime = event.Time
+			competitor.DeleteLastPenalty()
+		}
 	}
 	return msg, err
 }

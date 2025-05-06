@@ -13,13 +13,13 @@ import (
 
 func main() {
 
-	conf, err := LoadJSONConfig("internal/test/config.json")
+	conf, err := LoadJSONConfig("sunny_5_skiers/config.json")
 	if err != nil {
 		log.Fatal("Ошибка при обработке JSON-conf", err)
 	}
 
 	competition := NewCompetition(conf)
-	file := LoadEventFile("internal/test/events")
+	file := LoadEventFile("sunny_5_skiers/events")
 
 	scan := bufio.NewScanner(file)
 	for scan.Scan() {

@@ -21,11 +21,13 @@ func (report *Report) GenerateFinalReport() *Report {
 		// Расчет между стартом и последним действием на трассе (финиш круга/потерялся)
 		compDuration := comp.Laps[len(comp.Laps)-1].EndTime.Sub(comp.StartTime)
 		// Расчет скорости на каждом круге
-		lapsDur := report.calcLapDuration(comp, comp.Laps)
+		lapsDur := report.calcLapDuration(comp, comp.Laps, report.Competition.Config.LapLen)
 		// Расчет скорости на пенальти
-		penaltyDur := report.calcLapDuration(comp, comp.Penalties)
-		allShots := report.Competition.ShotsCount * report.Competition.Config.Laps
-		hitsPerShots := strconv.Itoa(comp.LineHits) + "/" + strconv.Itoa(allShots)
+		// TODO Проблемы с расчетом пенальти
+		penaltyDur := report.calcLapDuration(comp, comp.Penalties, report.Competition.Config.PenaltyLen)
+		//  TODO расчет всех выстрелов производится на основе УЖЕ сделанных выстрелов на площадке
+		//allShots := report.Competition.ShotsCount * report.Competition.Config.Laps
+		hitsPerShots := strconv.Itoa(comp.LineHits) + "/" + strconv.Itoa(comp.TotalShots)
 		obj := &ReportObject{
 			ID:                comp.ID,
 			Duration:          compDuration,
@@ -59,11 +61,11 @@ type LapAndSpeed struct {
 	lapSpeed float64
 }
 
-func (report *Report) calcLapDuration(comp *internal.Competitor, lap []internal.Lap) []LapAndSpeed {
+func (report *Report) calcLapDuration(comp *internal.Competitor, lap []internal.Lap, lapLength int) []LapAndSpeed {
 	lapsDur := make([]LapAndSpeed, len(lap))
 	for i := 0; i < len(lap); i++ {
-		lapTime := lap[i].EndTime.Sub(comp.StartTime)
-		lapSp := float64(report.Competition.Config.LapLen) / float64(int(lapTime.Seconds()))
+		lapTime := lap[i].EndTime.Sub(lap[i].StartTime)
+		lapSp := float64(lapLength) / float64(int(lapTime.Seconds()))
 		lapsDur[i] = LapAndSpeed{
 			lapTime:  lapTime,
 			lapSpeed: lapSp,
@@ -86,18 +88,26 @@ func (report *Report) Show() {
 		s1 := fmt.Sprintf("[%s] ", compTime)
 		s1 += fmt.Sprintf("%d ", reportObject.ID)
 		s1 += "[ "
-		for _, obj := range reportObject.lapsDuration {
-			s1 += fmt.Sprintf("{%s, %.3f} ", time_parser.ParseDurToStr(obj.lapTime), obj.lapSpeed)
+		for i, obj := range reportObject.lapsDuration {
+			s1 += fmt.Sprintf("{%s, %.3f}", time_parser.ParseDurToStr(obj.lapTime), obj.lapSpeed)
+			if i != len(reportObject.lapsDuration)-1 {
+				s1 += ", "
+			}
 		}
 		s1 += "] "
 		// TODO скобочки
-		for _, obj := range reportObject.penaltiesDuration {
+		s3 := ""
+		for i, obj := range reportObject.penaltiesDuration {
 
-			s1 += fmt.Sprintf("{%s, %.3f} ", time_parser.ParseDurToStr(obj.lapTime), obj.lapSpeed)
+			s3 += fmt.Sprintf("{%s, %.3f}", time_parser.ParseDurToStr(obj.lapTime), obj.lapSpeed)
+			if i != len(reportObject.penaltiesDuration)-1 {
+				s3 += ", "
+			}
 		}
+		s1 += fmt.Sprintf("{%s} ", s3)
 		s1 += fmt.Sprintf("%s", reportObject.HitsPerShots)
 
-		str := fmt.Sprintf("[ %s ]\n", s1)
+		str := fmt.Sprintf("%s \n", s1)
 		fmt.Print(str)
 	}
 }

@@ -14,6 +14,7 @@ type Competitor struct {
 	Penalties       []Lap
 	ShotLines       ShotLine
 	AllHits         int
+	TotalShots      int
 	LineHits        int    // Надо для расчета пенальти
 	Status          string // Следующие статусы должны быть в обработке "NotStarted", "NotFinished", "Finished", "Disqualified"
 	Comment         string
@@ -38,9 +39,15 @@ func (receiver *Competitor) AddPenalty(lap Lap) {
 func (receiver *Competitor) GetCurrentLap() *Lap {
 	return &receiver.Laps[len(receiver.Laps)-1]
 }
+func (reciever *Competitor) DeleteLastLap() {
+	reciever.Laps = reciever.Laps[:len(reciever.Laps)-1]
+}
 
 func (receiver *Competitor) GetCurrentPenalty() *Lap {
 	return &receiver.Penalties[len(receiver.Penalties)-1]
+}
+func (receiver *Competitor) DeleteLastPenalty() {
+	receiver.Penalties = receiver.Penalties[:len(receiver.Penalties)-1]
 }
 
 type ShotLine struct {
