@@ -13,7 +13,6 @@ import (
 type Competition struct {
 	Config      config.Config
 	Competitors map[int]*internal.Competitor
-	Events      []event.Event // А надо ли оно
 	ShotsCount  int
 }
 
@@ -77,6 +76,7 @@ func (receiver *Competition) process(event event.Event) (msg string, err error) 
 			StartTime: event.Time,
 			Length:    float64(receiver.Config.LapLen),
 		})
+
 	case 5:
 		msg += fmt.Sprintf("The competitor(%d) is on the firing range(%s)", competitor.ID, event.ExtraParams)
 
@@ -88,7 +88,7 @@ func (receiver *Competition) process(event event.Event) (msg string, err error) 
 		competitor.ShotLines.Hits[len(competitor.ShotLines.Hits)-1] += 1
 	case 7:
 		msg += fmt.Sprintf("The competitor(%d) left the firing range", competitor.ID)
-		// Найти длину, чтобы поделить потом на время и найти скорость
+
 		competitor.AllHits += competitor.LineHits
 		competitor.ShotLines.TotalHits += competitor.LineHits
 
@@ -102,7 +102,6 @@ func (receiver *Competition) process(event event.Event) (msg string, err error) 
 			Length:    float64(penaltyLen),
 		})
 
-		//Фиксируем penaltyStartTime
 	case 9:
 		msg += fmt.Sprintf("The competitor(%d) left the penalty laps", competitor.ID)
 		//TODO зафиксировать время отбытия
@@ -115,7 +114,9 @@ func (receiver *Competition) process(event event.Event) (msg string, err error) 
 		// Длина известна из конфига, время надо замерить. Status проставлять если нет другого (Started<Finished<Disqualified<NotStarted)
 		competitor.GetCurrentLap().EndTime = event.Time
 		if competitor.LapsCount >= receiver.Config.Laps {
-			competitor.Status = "Finished"
+			if competitor.Status == "" {
+				competitor.Status = "Finished"
+			}
 		} else {
 			//КОПИПАСТА ИСПРАВИТЬ
 			competitor.AddLap(internal.Lap{
@@ -135,8 +136,7 @@ func (receiver *Competition) process(event event.Event) (msg string, err error) 
 func (receiver *Competition) findCompetitor(CompetitorID int) *internal.Competitor {
 	if receiver.Competitors[CompetitorID] == nil {
 		receiver.Competitors[CompetitorID] = &internal.Competitor{
-			ID:     CompetitorID,
-			Status: "*", //TODO для тестов, убрать
+			ID: CompetitorID,
 		}
 	}
 	return receiver.Competitors[CompetitorID]

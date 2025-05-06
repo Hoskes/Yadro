@@ -6,33 +6,18 @@ import (
 	"time"
 )
 
-// Функция для парсинга длительности из строки формата "00:00:00"
+// Функция для парсинга длительности из строки формата  "00:00:00.000"
 func ParseStrToDuration(s string) (time.Duration, error) {
-	var hours, minutes, seconds int
-	_, err := fmt.Sscanf(s, "%02d:%02d:%02d", &hours, &minutes, &seconds)
+	var hours, minutes, seconds, milliseconds int
+	_, err := fmt.Sscanf(s, "%02d:%02d:%02d.%03d", &hours, &minutes, &seconds, &milliseconds)
 	if err != nil {
-		return 0, errors.New("parse duration error")
+		_, err = fmt.Sscanf(s, "%02d:%02d:%02d", &hours, &minutes, &seconds)
+		if err != nil {
+			return 0, errors.New("parse duration error")
+		}
 	}
-	return time.Duration(hours)*time.Hour + time.Duration(minutes)*time.Minute + time.Duration(seconds)*time.Second, nil
+	return time.Duration(hours)*time.Hour +
+		time.Duration(minutes)*time.Minute +
+		time.Duration(seconds)*time.Second +
+		time.Duration(milliseconds)*time.Millisecond, nil
 }
-
-//package time_parser
-//
-//import (
-//"errors"
-//"fmt"
-//"time"
-//)
-//
-//// Функция для парсинга длительности из строки формата "00:00:00.000"
-//func ParseStrToDuration(s string) (time.Duration, error) {
-//	var hours, minutes, seconds, milliseconds int
-//	_, err := fmt.Sscanf(s, "%02d:%02d:%02d.%03d", &hours, &minutes, &seconds, &milliseconds)
-//	if err != nil {
-//		return 0, errors.New("parse duration error")
-//	}
-//	return time.Duration(hours)*time.Hour +
-//		time.Duration(minutes)*time.Minute +
-//		time.Duration(seconds)*time.Second +
-//		time.Duration(milliseconds)*time.Millisecond, nil
-//}
