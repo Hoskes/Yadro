@@ -19,8 +19,10 @@ type Report struct {
 func (report *Report) GenerateFinalReport() *Report {
 	for _, comp := range report.Competition.Competitors {
 		// Расчет между стартом и последним действием на трассе (финиш круга/потерялся)
-		compDuration := comp.Laps[len(comp.Laps)-1].EndTime.Sub(comp.StartTime)
-
+		var compDuration time.Duration = 0
+		if len(comp.Laps) > 0 {
+			compDuration = comp.Laps[len(comp.Laps)-1].EndTime.Sub(comp.StartTime)
+		}
 		// Расчет скорости на каждом круге
 		lapsDur := report.calcLapDuration(comp.Laps, report.Competition.Config.LapLen)
 
@@ -90,7 +92,10 @@ func (report *Report) Show() string {
 
 		s1 := fmt.Sprintf("[%s] ", compTime)
 		s1 += fmt.Sprintf("%d ", reportObject.ID)
-		s1 += "[ "
+		s1 += "["
+		if len(reportObject.lapsDuration) > 0 {
+			s1 += " "
+		}
 		for i, obj := range reportObject.lapsDuration {
 			s1 += fmt.Sprintf("{%s, %.3f}", time_parser.ParseDurToStr(obj.lapTime), obj.lapSpeed)
 			if i != len(reportObject.lapsDuration)-1 {

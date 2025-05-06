@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// FileCreateAndWrite Создает и заполняет файлы для вывода
 func FileCreateAndWrite(path, msg string) (*os.File, error) {
 	file, err := os.Create(path)
 	if err != nil {

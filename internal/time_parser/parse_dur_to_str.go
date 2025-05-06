@@ -5,16 +5,14 @@ import (
 	"time"
 )
 
+// ParseDurToStr Парсит длительность из миллисекунд в формат 00:00:00.000
 func ParseDurToStr(duration time.Duration) string {
-	// Получаем часы, минуты и секунды
+	//Распил времени на составные
 	hours := int(duration.Hours())
 	minutes := int(duration.Minutes()) % 60
 	seconds := int(duration.Seconds()) % 60
 	milliseconds := duration % time.Second / time.Millisecond
 
-	// Форматируем строку
 	timeString := fmt.Sprintf("%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds)
-
-	// Выводим результат
-	return timeString // Вывод: 10:32:22.000
+	return timeString
 }

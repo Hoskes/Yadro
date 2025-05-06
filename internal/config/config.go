@@ -1,5 +1,6 @@
 package config
 
+// Config Структура для хранения данных
 type Config struct {
 	Laps        int    `json:"laps"`
 	LapLen      int    `json:"lapLen"`

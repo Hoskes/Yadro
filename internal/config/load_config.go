@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// LoadJSONConfig Подгружает данные из файла в структуру
 func LoadJSONConfig(path string) (Config, error) {
 	file, err := os.Open(path)
 	if err != nil {

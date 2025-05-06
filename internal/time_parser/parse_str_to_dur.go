@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Функция для парсинга длительности из строки формата  "00:00:00.000"
+// ParseStrToDuration Функция для парсинга длительности из строки формата  "00:00:00.000"
 func ParseStrToDuration(s string) (time.Duration, error) {
 	var hours, minutes, seconds, milliseconds int
 	_, err := fmt.Sscanf(s, "%02d:%02d:%02d.%03d", &hours, &minutes, &seconds, &milliseconds)

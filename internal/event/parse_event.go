@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// ParseEvent Парсит строку в структуру Event
 func ParseEvent(str string) (Event, error) {
 	args := strings.Split(str, " ")
 	var event Event

@@ -14,6 +14,8 @@ import (
 )
 
 func main() {
+	const shotsCount int = 5 //Взято из регламента проведения соревнований
+
 	// Задать параметры ввода-вывода
 	jsonConfig := flag.String("config", "sunny_5_skiers/config.json", "Path to JSON-config file")
 	inputPath := flag.String("input", "sunny_5_skiers/events", "Path to input events file")
@@ -28,7 +30,7 @@ func main() {
 	}
 
 	// Создание сущности соревнования
-	competition := NewCompetition(conf)
+	competition := NewCompetition(conf, shotsCount)
 	file := LoadEventFile(*inputPath)
 
 	scan := bufio.NewScanner(file)
