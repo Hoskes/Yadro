@@ -20,14 +20,16 @@ func (report *Report) GenerateFinalReport() *Report {
 	for _, comp := range report.Competition.Competitors {
 		// Расчет между стартом и последним действием на трассе (финиш круга/потерялся)
 		compDuration := comp.Laps[len(comp.Laps)-1].EndTime.Sub(comp.StartTime)
+
 		// Расчет скорости на каждом круге
-		lapsDur := report.calcLapDuration(comp, comp.Laps, report.Competition.Config.LapLen)
+		lapsDur := report.calcLapDuration(comp.Laps, report.Competition.Config.LapLen)
+
 		// Расчет скорости на пенальти
-		// TODO Проблемы с расчетом пенальти
-		penaltyDur := report.calcLapDuration(comp, comp.Penalties, report.Competition.Config.PenaltyLen)
-		//  TODO расчет всех выстрелов производится на основе УЖЕ сделанных выстрелов на площадке
-		//allShots := report.Competition.ShotsCount * report.Competition.Config.Laps
+		penaltyDur := report.calcLapDuration(comp.Penalties, report.Competition.Config.PenaltyLen)
+
+		// Расчет всех выстрелов производится на основе УЖЕ сделанных выстрелов на площадке
 		hitsPerShots := strconv.Itoa(comp.LineHits) + "/" + strconv.Itoa(comp.TotalShots)
+
 		obj := &ReportObject{
 			ID:                comp.ID,
 			Duration:          compDuration,
@@ -61,7 +63,7 @@ type LapAndSpeed struct {
 	lapSpeed float64
 }
 
-func (report *Report) calcLapDuration(comp *internal.Competitor, lap []internal.Lap, lapLength int) []LapAndSpeed {
+func (report *Report) calcLapDuration(lap []internal.Lap, lapLength int) []LapAndSpeed {
 	lapsDur := make([]LapAndSpeed, len(lap))
 	for i := 0; i < len(lap); i++ {
 		lapTime := lap[i].EndTime.Sub(lap[i].StartTime)
@@ -74,10 +76,11 @@ func (report *Report) calcLapDuration(comp *internal.Competitor, lap []internal.
 	return lapsDur
 }
 
-func (report *Report) Show() {
+func (report *Report) Show() string {
 	//	TODO доработать вывод по условиям
 
 	sort.Sort(ByDuration(report.Report))
+	res := ""
 	for _, reportObject := range report.Report {
 		// TODO влепить статус если не закончено
 		compTime := time_parser.ParseDurToStr(reportObject.Duration)
@@ -108,6 +111,7 @@ func (report *Report) Show() {
 		s1 += fmt.Sprintf("%s", reportObject.HitsPerShots)
 
 		str := fmt.Sprintf("%s \n", s1)
-		fmt.Print(str)
+		res += str
 	}
+	return res
 }

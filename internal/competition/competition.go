@@ -9,7 +9,7 @@ import (
 	"yadro-test-assigment/internal/time_parser"
 )
 
-// Competition Представляет собой текущее соревнование
+// Competition Представляет собой текущее соревнование по биатлону
 type Competition struct {
 	Config      config.Config
 	Competitors map[int]*internal.Competitor
@@ -31,7 +31,6 @@ func (receiver *Competition) ProcessEvent(event event.Event) string {
 	if err != nil {
 		return err.Error()
 	}
-
 	return processResult
 }
 
@@ -127,12 +126,14 @@ func (receiver *Competition) process(event event.Event) (msg string, err error) 
 		}
 	case 11:
 		msg += fmt.Sprintf("The competitor(%d) can`t continue: %s", competitor.ID, event.ExtraParams)
+
 		competitor.Status = "Not finished"
+
+		// Удалить заход на новый круг или пенальти если потерялся
 		if (competitor.GetCurrentLap().EndTime == time.Time{}) {
 			competitor.DeleteLastLap()
 		}
 		if (competitor.GetCurrentPenalty().EndTime == time.Time{}) {
-			//competitor.GetCurrentPenalty().EndTime = event.Time
 			competitor.DeleteLastPenalty()
 		}
 	}
