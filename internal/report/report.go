@@ -98,7 +98,7 @@ func (report *Report) Show() string {
 			}
 		}
 		s1 += "] "
-		// TODO скобочки
+
 		s3 := ""
 		for i, obj := range reportObject.penaltiesDuration {
 
