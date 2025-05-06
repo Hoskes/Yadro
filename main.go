@@ -4,7 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	. "yadro-test-assigment/internal"
+	report2 "yadro-test-assigment/internal/report"
+
 	. "yadro-test-assigment/internal/competition"
 	. "yadro-test-assigment/internal/config"
 	. "yadro-test-assigment/internal/event"
@@ -28,9 +29,20 @@ func main() {
 			log.Fatal("Ошибка при парсинге события:", parseErr)
 		}
 	}
-
-	// нужно потом убрать
-	for _, competitor := range competition.Competitors {
-		fmt.Println(competitor)
+	report := report2.Report{
+		Competition: *competition,
 	}
+	report.GenerateFinalReport()
+	report.Show()
+	// нужно потом убрать
+	//for _, competitor := range competition.Competitors {
+	//	//fmt.Println(competitor)
+	//	fmt.Println("ID", competitor.ID)
+	//	fmt.Println("Shots:", competitor.ShotLines)
+	//	fmt.Println("Status:", competitor.Status)
+	//	fmt.Println("Hits:", competitor.LineHits)
+	//	fmt.Println("Laps:", competitor.Laps)
+	//	fmt.Println("Penalties", competitor.Penalties)
+	//	fmt.Println("Comment:", competitor.Comment)
+	//}
 }
